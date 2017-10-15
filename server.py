@@ -156,6 +156,7 @@ def users():
     '''
     display all of the users information. IE the users posts and comments and
     messages from other users.
+        Simmilar to post comment generating
     '''
     return render_template('users.html')
 
@@ -178,9 +179,10 @@ def posts(sub, post):
                     return render_template('posts.html', posts = posts)
         
     '''
-    render any aplicable photo or video
 
-    render comments
+    render comments --> this will be another for loop nested in the inner loop
+        run query for all coments where the post id matches, put that in a variable IE
+        comments and then on the html page run a for loop that posts all comments
     '''
     return render_template('404.html')
 
@@ -262,3 +264,22 @@ def newPost():
 
 
 app.run(debug=True)
+
+'''
+Working features:
+    homepage(still needs top posts)
+    subreddits
+    submit page fully functional
+    resister page fully functional
+
+To Do:
+    comments on posts
+    User page
+        messages
+        Subscriptions
+
+Overtime:
+    likes
+    looking pretty
+    changing colors
+'''
