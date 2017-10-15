@@ -52,7 +52,9 @@ def subs(sub):
 
     if logged in, give the user an option to follow that subreddit. Also maybe
     add functionality to unsubscribe
+        -this will require a seperate post route
     '''
+    #if we do not find the specified page, we render the 404 page
     return render_template('404.html')
 
 
