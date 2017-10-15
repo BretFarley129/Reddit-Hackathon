@@ -42,7 +42,6 @@ def subs(sub):
     check = "SELECT * FROM subreddits"
     for i in (mysql.query_db(check)):
         if i['url'] == sub:
-            print "turd"
             current_id = i['id']
             query = "SELECT text, title FROM posts WHERE subreddit_id = {}".format(current_id)
             posts = mysql.query_db(query)
@@ -160,16 +159,30 @@ def users():
     '''
     return render_template('users.html')
 
-@app.route('/posts/<sub>/<post>')
+@app.route('/<sub>/<post>')
 def posts(sub, post):
-   
+    print "check"
+    check = "SELECT * FROM subreddits"
+    #check if the sub exists
+    for i in (mysql.query_db(check)):
+        if i['url'] == sub:
+            current_id = i['id']
+            check2 = "SELECT * FROM posts"
+            #check if the post exists
+            for j in (mysql.query_db(check2)):
+                if j['title'] == post:
+                    post_id = j['id']
+                    query = "SELECT text, title FROM posts WHERE id = {}".format(post_id)
+                    posts = mysql.query_db(query)
+                    print posts
+                    return render_template('posts.html', posts = posts)
         
     '''
     render any aplicable photo or video
 
     render comments
     '''
-    return render_template('posts.html')
+    return render_template('404.html')
 
 @app.route('/newSub')
 def newSub():

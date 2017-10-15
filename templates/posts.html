@@ -8,6 +8,18 @@
     <title>Post Page</title>
 </head>
 <body>
-    <h1>A post</h1>    
+    <div id="wrapper">
+        <div id="head">
+            <h1>A POST</h1>
+        </div>
+        <div id="body">
+            <div id="content">
+                {%for i in posts%}
+                    <h2>{{i['title']}}</h2>
+                    {{i['text']}}
+                {%endfor%}
+            </div>
+        </div>
+    </div>   
 </body>
 </html>
