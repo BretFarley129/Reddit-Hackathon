@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">    
-    <title>Sign up for Shreddit!</title>
+    <title>Create a subShreddit!</title>
 </head>
 <body>
     <div id="wrapper">
             <div id="head">
-                <h1>Register now!</h1>
+                <h1>new subshreddit</h1>
                 <a href="subs">subs</a>
                 <a href="register">register</a>
                 <a href="users">users</a>
@@ -20,18 +20,13 @@
             <div id="body">
                 <div id="content">
                         <h1>Register</h1>
-                        <form action="/newPost" method="post">
-                            <input type="hidden" name="action" value="register">
-                                    <p>Title:</p>
-                                    
-                                    <input type="text" name="title" id="title">                           
-                                    <p>Text:</p>
-                                    
-                                    <input type="text" name="text" id="text">
-                                    <p>Choose a sub:</p>
-                                    
-                                    <input type="text" name="sub" id="sub">
-                            <br>
+                        <form action="/newSub" method="post">
+                            <input type="hidden" name="action" value="newSub">
+                    
+                            <label for="subName">Sub name:<input type="text" name="subName" id="subName"></label>
+                    
+                            <label for="password">Password:<input type="password" name="password" id="password"></label>
+                    
                             <input type="submit" name="go" value="Submit">
                         </form>
                         {% with messages = get_flashed_messages() %}

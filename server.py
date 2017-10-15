@@ -8,6 +8,10 @@ app = Flask(__name__)
 app.secret_key = "waow"
 mysql = MySQLConnector(app,'reddit')
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 @app.route('/')
 def index():
     if not "loggedOn" in session:
@@ -33,15 +37,25 @@ def index():
     '''
     return render_template('index.html')
 
-@app.route('/subs')
-def subs():
+@app.route('/<sub>')
+def subs(sub):
+    check = "SELECT * FROM subreddits"
+    for i in (mysql.query_db(check)):
+        if i['url'] == sub:
+            print "turd"
+            current_id = i['id']
+            query = "SELECT text, title FROM posts WHERE subreddit_id = {}".format(current_id)
+            posts = mysql.query_db(query)
+            return render_template('subs.html', posts = posts)
     '''
     make a query to retrieve top posts from particular sub
 
     if logged in, give the user an option to follow that subreddit. Also maybe
     add functionality to unsubscribe
     '''
-    return render_template('subs.html')
+    return render_template('404.html')
+
+
 
 @app.route('/register')
 def register():
@@ -59,10 +73,6 @@ def logoff():
 
 @app.route('/logAndReg', methods=['POST'])
 def logAndReg():
-    if request.form['action'] == 'logOff':
-        session['loggedOn'] = False
-        session['username'] = "null"
-        return redirect('/')
     if request.form['action'] == 'signIn':
         username = request.form['username']
         password = request.form['password']
@@ -148,8 +158,10 @@ def users():
     '''
     return render_template('users.html')
 
-@app.route('/posts')
-def posts():
+@app.route('/posts/<sub>/<post>')
+def posts(sub, post):
+   
+        
     '''
     render any aplicable photo or video
 
@@ -157,13 +169,81 @@ def posts():
     '''
     return render_template('posts.html')
 
+@app.route('/newSub')
+def newSub():
+    '''
+    make a query to retrieve top posts from particular sub
+
+    if logged in, give the user an option to follow that subreddit. Also maybe
+    add functionality to unsubscribe
+    '''
+    return redirect('/')
+
 @app.route('/submit')
 def submit():
-    '''
-    Probably take code from registration form and format to better fit the fields 
-    for submission
-    '''
     return render_template('submit.html')
+
+@app.route('/newPost', methods=['POST'])
+def newPost():
+    if request.form['title']:
+        title = request.form['title']
+    else:
+        flash("fields may not be blank")
+        return redirect('/submit')
+    if request.form['text']:
+        text = request.form['text']
+    else:
+        flash("fields may not be blank")
+        return redirect('/submit')
+    if request.form['sub']:
+        sub = request.form['sub']
+    else:
+        flash("fields may not be blank")
+        return redirect('/submit')
+
+    #fetches current user ID
+    q1 = "SELECT id FROM users where username = '{}'".format(session['username'])
+    d1 = mysql.query_db(q1)
+    current_id = d1[0]['id']
+    print current_id
+
+    #fetches current sub ID
+    q2 = "SELECT id FROM subreddits where url = '{}'".format(sub)
+    d2 = mysql.query_db(q2)
+    if d2:
+        current_sub = d2[0]['id']
+    
+
+    data = {'title': title,
+            'text': text,
+            'url': sub,
+            'id': current_id,
+            }
+
+    check = "SELECT * FROM subreddits"
+    for i in (mysql.query_db(check)):
+        if i['url'] == sub:
+            print "we here"
+            data['subID'] = current_sub
+            print data['subID']
+            query2 = "INSERT INTO posts (text, user_id, subreddit_id, created_at, title) VALUES (:text, :id, :subID, NOW(), :title)"
+            mysql.query_db(query2, data)
+            return redirect('/')
+
+    #insert into database if new subreddit
+    #adds subreddit
+    query1 = "INSERT INTO subreddits (url, created_at) VALUES (:url, NOW())"
+    mysql.query_db(query1, data)
+    #retrieves subreddit id
+    q3 = "SELECT id FROM subreddits where url = '{}'".format(sub)
+    d3 = mysql.query_db(q3)
+    print d3
+    if d3:
+        current_sub = d3[0]['id']
+    data['subID'] = current_sub
+    query2 = "INSERT INTO posts (text, user_id, subreddit_id, created_at) VALUES (:text, :id, :subID, NOW())"
+    mysql.query_db(query2, data)
+    return redirect('/')
 
 
 app.run(debug=True)
