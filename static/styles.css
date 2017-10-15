@@ -25,6 +25,7 @@
     width: 700px;
     background-color: pink;
     display: inline-block;
+    
 }
 
 #login{
@@ -32,13 +33,15 @@
     width: 290px;
     background-color: blue;
     display: inline-block;
+    vertical-align: top
+    
 }
 
-#login{
-    height: 590px;
+/* #side{
+    height: 570px;
     width: 290px;
     background-color: orange;
     display: inline-block;
-}
-
+    vertical-align: top;
+} */
 
